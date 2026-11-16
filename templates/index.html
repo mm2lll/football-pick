@@ -1,0 +1,690 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Football Pick | Champions Night</title>
+<style>
+:root {
+  --bg:#030b27;
+  --panel:#07163b;
+  --line:#244eaa;
+  --muted:#a8b8de;
+  --blue:#008cff;
+}
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {
+  margin:0;
+  background:radial-gradient(ellipse at 90% 100%,#231075,transparent 36%),var(--bg);
+  color:#fff;
+  font-family:system-ui,"Malgun Gothic",sans-serif;
+}
+a {color:inherit;text-decoration:none}
+button {font:inherit;cursor:pointer}
+.top {
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 34px;
+  background:#06113b;
+  border-bottom:1px solid #27488c;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.logo {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:23px;
+  font-weight:850;
+}
+.ucl-logo {
+  width:43px;
+  height:43px;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px #268cff);
+}
+.logo-fallback {font-size:35px}
+.top nav {display:flex;gap:55px}
+.top nav a {font-weight:700;padding:22px 0}
+.top nav a.active {border-bottom:4px solid #00b5ff}
+.right-icons {font-size:23px}
+.shell {display:flex;min-height:calc(100vh - 72px)}
+.sidebar {
+  width:222px;
+  flex-shrink:0;
+  padding:30px 13px;
+  background:linear-gradient(170deg,#061139,#0a1b57);
+  border-right:1px solid #1b397e;
+}
+.sidebar-brand {
+  text-align:center;
+  font-family:Georgia,serif;
+  font-size:20px;
+  font-weight:bold;
+  line-height:1.15;
+  margin-bottom:34px;
+}
+.sidebar-brand .ucl-logo {
+  display:block;
+  width:95px;
+  height:95px;
+  margin:0 auto 12px;
+}
+.sidebar a {
+  display:flex;
+  align-items:center;
+  padding:14px 18px;
+  margin-bottom:8px;
+  border-radius:8px;
+  color:#dce8ff;
+}
+.sidebar a.current,.sidebar a:hover {
+  background:linear-gradient(90deg,#005de5,#092b70);
+  box-shadow:inset 3px 0 #00c6ff;
+}
+.main {flex:1;min-width:0;padding-bottom:70px}
+.hero {
+  height:250px;
+  display:flex;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,#071443 4%,#092d86aa 48%,#210b66bb),
+    radial-gradient(ellipse at 65% 30%,#1b92ff,transparent 44%),
+    linear-gradient(#061037,#01071d);
+  border-bottom:1px solid #235baf;
+}
+.hero::before {
+  content:"";
+  position:absolute;
+  right:-8%;
+  top:-120px;
+  width:72%;
+  height:330px;
+  border:3px solid #0cb5ff;
+  border-radius:50%;
+  transform:rotate(-18deg);
+  box-shadow:0 0 30px #147bff,0 0 90px #7e28ff;
+}
+.hero-copy {position:relative;z-index:1;padding-left:7%}
+.hero .eyebrow {
+  letter-spacing:5px;
+  font-size:13px;
+  color:#c4ddff;
+  font-weight:700;
+}
+.hero h1 {
+  font-size:clamp(36px,4.6vw,65px);
+  margin:9px 0 4px;
+  letter-spacing:-2px;
+}
+.hero p {font-size:24px;margin:0;color:#d8e6ff}
+.content {padding:24px 26px}
+.section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+.section-head h2 {font-size:25px;margin:0}
+.filter {
+  border:1px solid #4e6daf;
+  background:#0b1a45;
+  color:white;
+  border-radius:9px;
+  padding:10px 18px;
+}
+.table-head,.match {
+  display:grid;
+  grid-template-columns:27% 24% 25% 24%;
+}
+.table-head {
+  background:linear-gradient(#16336e,#0c2053);
+  border:1px solid #355bb2;
+  border-radius:12px 12px 0 0;
+  padding:13px 0;
+  font-weight:750;
+}
+.table-head span {
+  padding:0 18px;
+  border-right:1px solid #39528c;
+}
+.table-head span:last-child {border:0}
+.match {
+  background:linear-gradient(110deg,#0a1a4c,#0b163c 68%,#110c43);
+  border:1px solid #3156b3;
+  border-radius:9px;
+  margin-bottom:8px;
+  min-height:164px;
+  overflow:hidden;
+  box-shadow:0 7px 28px #01051c77;
+}
+.cell {
+  padding:15px 16px;
+  border-right:1px solid #243b73;
+  min-width:0;
+}
+.cell:last-child {border:0}
+.meta {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  font-size:12px;
+  color:#d3e1ff;
+}
+.pill {
+  border:1px solid #315db4;
+  border-radius:7px;
+  padding:4px 8px;
+  background:#113987;
+  font-weight:750;
+}
+.versus {
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  gap:7px;
+  margin-top:13px;
+}
+.club {
+  min-width:0;
+  flex:1;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+}
+.crest {
+  width:56px;
+  height:56px;
+  border:2px solid #6ab8ff;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 20%,#3068ba,#07183f);
+  box-shadow:0 0 15px #0b7dff55;
+  display:grid;
+  place-items:center;
+  margin:0 auto 7px;
+  font-size:14px;
+  font-weight:900;
+  overflow:hidden;
+}
+.crest img {
+  width:46px;
+  height:46px;
+  object-fit:contain;
+}
+.vs {color:#92a2c7;font-size:20px;font-weight:850}
+.form-pair {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  height:100%;
+  align-items:center;
+}
+.form-team {text-align:center;min-width:0}
+.form-team .name {
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:9px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.badges {display:flex;justify-content:center;gap:3px}
+.badge {
+  font-size:11px;
+  font-weight:800;
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:23px;
+  border-radius:5px;
+}
+.W {background:#08a344}
+.D {background:#8793a8}
+.L {background:#ed3447}
+.form-summary {
+  font-size:11px;
+  color:#c2d1ed;
+  margin-top:7px;
+}
+.predict-title,.stats-title {
+  font-size:13px;
+  font-weight:750;
+  margin:4px 0 13px;
+}
+.vote-buttons {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+.vote-buttons button {
+  background:linear-gradient(#182c5a,#0b1a3c);
+  border:1px solid #61739e;
+  border-radius:7px;
+  color:white;
+  font-weight:750;
+  font-size:13px;
+  padding:11px 2px;
+  white-space:nowrap;
+}
+.vote-buttons button:hover,
+.vote-buttons button.chosen {
+  background:linear-gradient(#00a8ff,#0055ed);
+  border-color:#34d3ff;
+  box-shadow:0 0 12px #006aff88;
+}
+.odds {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  margin-top:9px;
+  border:1px solid #314a81;
+  border-radius:6px;
+  overflow:hidden;
+}
+.odds span {
+  padding:7px 0;
+  text-align:center;
+  font-weight:800;
+  background:#101f4c;
+  border-right:1px solid #314a81;
+}
+.odds span:last-child {border:0}
+.tiny {color:#9fb5e0;font-size:10px;margin-top:7px}
+.message {
+  font-size:11px;
+  min-height:14px;
+  color:#6cecc6;
+  margin-top:6px;
+}
+.stat {
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr) 43px;
+  align-items:center;
+  gap:8px;
+  margin:11px 0;
+  font-size:12px;
+}
+.bar {
+  height:11px;
+  background:#24365d;
+  border-radius:12px;
+  overflow:hidden;
+}
+.fill {
+  height:100%;
+  width:0;
+  transition:width .4s;
+  background:linear-gradient(90deg,#0065fc,#2ec8ff);
+}
+.stat:nth-child(3) .fill {
+  background:linear-gradient(90deg,#75859e,#a9b5c6);
+}
+.stat:nth-child(4) .fill {
+  background:linear-gradient(90deg,#7533eb,#bd78f6);
+}
+.percent {text-align:right}
+.disclaimer {
+  font-size:12px;
+  color:#aebfe2;
+  margin:16px 0;
+}
+.mobile-nav {display:none}
+
+@media(max-width:1300px) {
+  .table-head {display:none}
+  .match {grid-template-columns:1fr 1fr}
+  .cell:nth-child(2) {border-right:0}
+  .cell:nth-child(-n+2) {
+    border-bottom:1px solid #243b73;
+  }
+}
+@media(max-width:720px) {
+  .top {height:60px;padding:0 16px}
+  .logo {font-size:17px}
+  .top nav,.right-icons,.sidebar {display:none}
+  .top .ucl-logo {width:34px;height:34px}
+  .hero {height:190px}
+  .hero-copy {padding-left:22px}
+  .hero .eyebrow {font-size:10px;letter-spacing:2px}
+  .hero p {font-size:16px}
+  .content {padding:18px 12px 90px}
+  .section-head h2 {font-size:20px}
+  .filter {padding:7px 10px}
+  .match {grid-template-columns:1fr}
+  .cell {
+    border-right:0;
+    border-bottom:1px solid #243b73!important;
+  }
+  .cell:last-child {border-bottom:0!important}
+  .versus {max-width:340px;margin:15px auto 0}
+  .form-pair {padding:8px 0}
+  .mobile-nav {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:10;
+    background:#071844;
+    border-top:1px solid #3472c7;
+    display:flex;
+    justify-content:space-around;
+    padding:12px 6px 17px;
+  }
+  .mobile-nav a {font-size:12px;text-align:center}
+}
+.ucl-logo {
+    filter: brightness(0) invert(1);
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="logo">
+    <img
+  class="ucl-logo"
+  src="{{ url_for('static', filename='images/ucl.png') }}"
+  alt="챔피언스리그 로고"
+>
+    FOOTBALL PICK
+  </div>
+  <nav>
+    <a class="active" href="#home">홈</a>
+    <a href="#games">경기</a>
+    <a href="#games">통계</a>
+    <a href="#games">내 예측</a>
+  </nav>
+  <div class="right-icons">♧　♙</div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img class="ucl-logo"
+        src="https://upload.wikimedia.org/wikipedia/commons/6/6a/UEFA_Champions_League_logo_2.svg"
+        alt="챔피언스리그"
+        onerror="this.style.display='none'">
+      CHAMPIONS<br>LEAGUE
+    </div>
+    <a class="current" href="#home">⌂　홈</a>
+    <a href="#games">▦　경기 일정</a>
+    <a href="#games">▥　리그 순위</a>
+    <a href="#games">▤　통계</a>
+    <a href="#games">♙　내 예측</a>
+  </aside>
+
+  <main class="main" id="home">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">EUROPEAN CHAMPIONS NIGHT</div>
+        <h1>Football Pick</h1>
+        <p>챔피언스리그 승부 예측 서비스</p>
+      </div>
+    </section>
+
+    <div class="content" id="games">
+      <div class="section-head">
+        <h2>✦ 챔피언스리그 경기 예측</h2>
+        <button class="filter" type="button">전체 ▾</button>
+      </div>
+
+      <div class="table-head">
+        <span>경기 정보</span>
+        <span>팀 최근 전적 (최근 5경기)</span>
+        <span>승부 예측 및 배당률</span>
+        <span>예측 현황</span>
+      </div>
+
+      <div id="matches" aria-live="polite"></div>
+
+      <p class="disclaimer">
+        ※ 경기 일정, 최근 전적 및 배당률은 시연용 가상 데이터입니다.
+        실제 베팅 기능은 제공하지 않습니다.
+        현재는 클릭마다 투표가 추가되는 데모 방식입니다.
+      </p>
+    </div>
+  </main>
+</div>
+
+<nav class="mobile-nav">
+  <a href="#home">⌂ 홈</a>
+  <a href="#games">⚽ 경기</a>
+  <a href="#games">▥ 통계</a>
+  <a href="#games">♙ 내 예측</a>
+</nav>
+
+<script>
+// 팀 엠블럼 이미지 주소
+const teamLogos = {
+  "토트넘": "https://resources.premierleague.com/premierleague/badges/50/t6.png",
+  "아스널": "https://resources.premierleague.com/premierleague/badges/50/t3.png",
+  "리버풀": "https://resources.premierleague.com/premierleague/badges/50/t14.png",
+  "맨시티": "https://resources.premierleague.com/premierleague/badges/50/t43.png",
+  "맨체스터 시티": "https://resources.premierleague.com/premierleague/badges/50/t43.png",
+  "레알 마드리드": "https://crests.football-data.org/86.png",
+  "바르셀로나": "https://crests.football-data.org/81.png",
+"FC 바르셀로나": "https://crests.football-data.org/81.png",
+  "바이에른 뮌헨": "https://crests.football-data.org/5.png",
+  "PSG": "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg",
+  "파리 생제르맹": "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg",
+};
+
+const formNames = {W:"승",D:"무",L:"패"};
+const choices = ["홈 승","무승부","원정 승"];
+
+function el(tag, cls, txt) {
+  const x = document.createElement(tag);
+  if(cls) x.className = cls;
+  if(txt !== undefined) x.textContent = txt;
+  return x;
+}
+
+// 팀 로고 생성
+function club(name, code) {
+  const x = el("div","club");
+  const crest = el("div","crest");
+
+  if(teamLogos[name]) {
+    const img = document.createElement("img");
+    img.src = teamLogos[name];
+    img.alt = name + " 엠블럼";
+    img.loading = "lazy";
+
+    img.onerror = () => {
+      crest.textContent = code;
+    };
+
+    crest.append(img);
+  } else {
+    crest.textContent = code;
+  }
+
+  x.append(crest, el("div","",name));
+  return x;
+}
+
+// 최근 5경기 표시
+function formBlock(team, form) {
+  const root = el("div","form-team");
+  root.append(el("div","name",team));
+
+  const badges = el("div","badges");
+  for(const letter of form) {
+    badges.append(
+      el("span","badge " + letter,formNames[letter] || "?")
+    );
+  }
+  root.append(badges);
+
+  const wins = [...form].filter(x=>x==="W").length;
+  const draws = [...form].filter(x=>x==="D").length;
+  const losses = [...form].filter(x=>x==="L").length;
+
+  root.append(
+    el("div","form-summary",`${wins}승 ${draws}무 ${losses}패`)
+  );
+  return root;
+}
+
+// 예측 통계
+async function updateStats(id) {
+  const res = await fetch(`/api/results/${id}`);
+  if(!res.ok) throw Error("통계 조회 실패");
+
+  const data = await res.json();
+
+  document.getElementById(`total-${id}`).textContent =
+    `예측 현황 (총 ${data.total}표)`;
+
+  data.percentages.forEach((p,i)=>{
+    document.getElementById(`fill-${id}-${i}`).style.width = p + "%";
+    document.getElementById(`pct-${id}-${i}`).textContent = p + "%";
+  });
+}
+
+// 투표 저장
+async function vote(id, choice, button) {
+  const msg = document.getElementById(`msg-${id}`);
+  msg.textContent = "저장 중...";
+
+  try {
+    const res = await fetch("/api/predict",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({match_id:id,choice})
+    });
+
+    const data = await res.json();
+    if(!res.ok) throw Error(data.error || "저장 실패");
+
+    button.parentNode.querySelectorAll("button").forEach(b=>{
+      b.classList.remove("chosen");
+    });
+    button.classList.add("chosen");
+
+    msg.textContent = "예측이 저장되었습니다.";
+    await updateStats(id);
+  } catch(e) {
+    msg.textContent = e.message;
+  }
+}
+
+// 경기 카드 생성
+function matchCard(m) {
+  const card = el("article","match");
+
+  // 경기 정보
+  const a = el("div","cell");
+  const meta = el("div","meta");
+  meta.append(
+    el("span","pill",m.stage || "UCL · DEMO"),
+    el("span","",m.date || "일정 미정")
+  );
+  a.append(meta);
+
+  const vs = el("div","versus");
+  vs.append(
+    club(m.home,m.homeCode || "HOME"),
+    el("span","vs","VS"),
+    club(m.away,m.awayCode || "AWAY")
+  );
+  a.append(vs);
+
+  // 최근 전적
+  const b = el("div","cell");
+  const forms = el("div","form-pair");
+  forms.append(
+    formBlock(m.home,m.homeForm || "DDDDD"),
+    formBlock(m.away,m.awayForm || "DDDDD")
+  );
+  b.append(forms);
+
+  // 예측 버튼과 배당률
+  const c = el("div","cell");
+  c.append(el("div","predict-title","승부 예측하기"));
+
+  const buttons = el("div","vote-buttons");
+  choices.forEach((label,i)=>{
+    const button = el("button","",label);
+    button.type = "button";
+    button.onclick = ()=>vote(m.id,i,button);
+    buttons.append(button);
+  });
+  c.append(buttons);
+
+  const odds = el("div","odds");
+  (m.odds || ["-","-","-"]).forEach(n=>{
+    odds.append(el("span","",String(n)));
+  });
+  c.append(
+    odds,
+    el("div","tiny","배당률: 시연용 가상 수치")
+  );
+
+  const msg = el("div","message");
+  msg.id = `msg-${m.id}`;
+  c.append(msg);
+
+  // 예측 통계
+  const d = el("div","cell");
+  const title = el("div","stats-title","예측 현황");
+  title.id = `total-${m.id}`;
+  d.append(title);
+
+  choices.forEach((label,i)=>{
+    const row = el("div","stat");
+    const bar = el("div","bar");
+    const fill = el("div","fill");
+    const pct = el("span","percent","0%");
+
+    fill.id = `fill-${m.id}-${i}`;
+    pct.id = `pct-${m.id}-${i}`;
+
+    bar.append(fill);
+    row.append(el("span","",label),bar,pct);
+    d.append(row);
+  });
+
+  card.append(a,b,c,d);
+  return card;
+}
+
+// 서버에서 경기 불러오기
+async function load() {
+  const target = document.getElementById("matches");
+
+  try {
+    const res = await fetch("/api/matches");
+    if(!res.ok) throw Error("경기 목록 조회 실패");
+
+    const matches = await res.json();
+    target.replaceChildren(...matches.map(matchCard));
+
+    await Promise.all(matches.map(m=>updateStats(m.id)));
+  } catch(e) {
+    target.textContent = e.message;
+  }
+}
+
+load();
+
+// 15초마다 통계 갱신
+setInterval(()=>{
+  document.querySelectorAll(".match").forEach(card=>{
+    const title = card.querySelector(".stats-title");
+    if(title) {
+      const id = title.id.replace("total-","");
+      updateStats(id).catch(()=>{});
+    }
+  });
+},15000);
+</script>
+</body>
+</html>
